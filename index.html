@@ -19,7 +19,7 @@
         { key: 'k', name: 'Keep', url: 'https://keep.google.com', search: '/#search/text=' },
       ] },
       { name: "People", commands: [
-        { key: 'r', name: 'Reddit', url: 'https://www.reddit.com', search: '/search?q=' },
+        { key: 'y', name: 'Youtube', url: 'https://www.youtube.com', search: '/results?search_query=' },
         { key: 't', name: 'Twitter', url: 'https://twitter.com', search: '/search?q=' },
         { key: 'f', name: 'Facebook', url: 'https://www.facebook.com', search: '/search/?q=' },
       ] },
@@ -73,6 +73,12 @@
 <title>~</title>
 
 <style type="text/css">
+
+  @font-face {
+    font-family: 'Apercu Pro Mono';
+    src: url(apercu_mono_pro.otf);
+  }
+
   @font-face {
     font-family: 'Lato';
     src: url('https://fonts.gstatic.com/s/lato/v11/22JRxvfANxSmnAhzbFH8PgLUuEpTyoUstqEm5AMlJo4.woff2') format('woff2');
@@ -87,7 +93,8 @@
     margin: 0;
     padding: 0;
     color: #333;
-    font-family: 'Lato', sans-serif;
+    font-family: 'Lato';
+    background-color: #fff;
   }
 
   main {
@@ -131,7 +138,7 @@
     outline: 0;
     -webkit-appearance: none;
     -moz-appearance: none;
-    font-family: 'Lato', sans-serif;
+    font-family: 'Lato';
     text-align: center;
     color: transparent;
     text-shadow: 0px 0px 0px #fff; /* If background is #222 set to #fff.*/
@@ -201,8 +208,8 @@
   }
 
   .category {
-    width: 175px;
-    margin: 20px 10px 0;
+    width: 180px;
+    margin: 20px 50px 0;
   }
 
   .category-name {
@@ -211,9 +218,10 @@
     border-radius: 2px 2px 0 0;
     background: #30a388;
     color: #222;
-    font-size: .8rem;
+    font-size: 1rem;
     text-transform: uppercase;
     text-align: center;
+    font-weight: lighter;
   }
 
   .command {
@@ -241,7 +249,7 @@
     display: block;
     padding: 14px 12px;
     color: #eee;
-    font-size: .8rem;
+    font-size: 1rem;
     line-height: 1.3rem;
     text-decoration: none;
   }
@@ -253,7 +261,8 @@
     float: left;
     border-radius: 2px;
     background: #292929;
-    font-family: 'Courier New', monospace;
+    font-family: 'Apercu Pro Mono';
+    font-size: .9rem;
     text-align: center;
   }
 
@@ -268,7 +277,7 @@
 
 <main>
   <div href="#"  id="time" onclick="toggle_visibility('js-clock','time'); endTimer()" class="bigben">you should not see this</div>
-  <time href="#" onclick="toggle_visibility('time','js-clock'); Pomodoro(60*25);" id="js-clock" class="bigben"></time>
+  <time href="#" onclick="toggle_visibility('time','js-clock'); Pomodoro(25);" id="js-clock" class="bigben"></time>
   <form id="js-search-form" autocomplete="off">
     <input id="js-search-input" class="search-input" type="text" autofocus>
     <ul id="js-search-suggestions" class="search-suggestions"></ul>
@@ -311,6 +320,9 @@
   var t; /*I want to delet this, ideally.*/
   function endTimer() {
     clearInterval(t);
+    document.body.style.backgroundColor = '#fff';
+    $$.el('time').style.color = '#222';
+    $$.el('js-search-input').style.backgroundColor = '#222';
     return;
   }
 
@@ -724,10 +736,15 @@
           diff,
           minutes,
           seconds,
-          mins = duration;
+          dur = (duration*60)
+
+      if (duration !== 5) {
+        document.body.style.backgroundColor = '#222';
+        $$.el('time').style.color = '#fff';
+      }
 
       function timer() {
-          diff = duration - (((Date.now() - start) / 1000) | 0);
+          diff = dur - (((Date.now() - start) / 1000) | 0);
           minutes = (diff / 60) | 0;
           seconds = (diff % 60) | 0;
 
@@ -737,19 +754,18 @@
           $$.el('time').textContent = `${minutes} ${seconds}`;
 
           if (diff <= 0)  {
-            if (mins == (5*60)) {
-              start = Date.now() + 2000;
-            } else {
               start = Date.now() + 1000;
-              }
           }
+
           if(seconds == 0 && minutes == 0)  {
-            if (mins == (5*60)) {
+            if (duration == 5) {
                 clearInterval(t);
                 return;
               } else {
+                  document.body.style.backgroundColor = '#30a388';
+                  $$.el('js-search-input').style.backgroundColor = '#30a388';
                   clearInterval(t);
-                  Pomodoro(5*60);
+                  Pomodoro(5);
                 }
             }
       };
